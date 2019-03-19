@@ -3,20 +3,20 @@ const db = require("../data/db.js");
 const router = express.Router();
 
 router.post("/", (req, res) => {
-  if (res.body.title && res.body.contents) {
-    try {
-      db.insert(res.body);
-      res.status(201).json(res.body);
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        error: "There was an error while saving the post to the database"
-      });
-    }
+  if (!req.body.title || !req.body.contents) {
+    res
+      .status(400)
+      .json({ errorMessage: "Please provide name and bio for the user." });
   } else {
-    res.status(400).json({
-      errorMessage: "Please provide title and contents for the post."
-    });
+    db.insert(req.body)
+      .then(success => {
+        res.status(201).json(req.body);
+      })
+      .catch(err =>
+        res
+          .status(500)
+          .json({ error: "The users information could not be retrieved." })
+      );
   }
 });
 
