@@ -4,18 +4,25 @@ const router = express.Router();
 
 router.post("/", (req, res) => {
   if (!req.body.title || !req.body.contents) {
-    res
-      .status(400)
-      .json({ errorMessage: "Please provide name and bio for the user." });
+    res.status(400).json({
+      errorMessage: "Please provide title and contents for the post."
+    });
   } else {
     db.insert(req.body)
       .then(success => {
-        res.status(201).json(req.body);
+        success
+          ? res.status(201).json(req.body)
+          : res
+              .status(500)
+              .json({
+                error:
+                  "Oops, the request was good but something went wrong internally.  Try again!"
+              });
       })
       .catch(err =>
         res
           .status(500)
-          .json({ error: "The users information could not be retrieved." })
+          .json({ error: "The posts information could not be retrieved." })
       );
   }
 });
