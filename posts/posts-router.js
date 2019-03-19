@@ -19,11 +19,18 @@ router.post("/", (req, res) => {
     });
   }
 });
+
 router.get("/", (req, res) => {
-  console.log("Get!");
   try {
-    const posts = db.find();
-    res.status(200).json(posts);
+    const posts = db
+      .find()
+      .then(posts =>
+        posts
+          ? res.status(200).json(posts)
+          : res
+              .status(500)
+              .json({ error: "There was an error retrieving the posts" })
+      );
   } catch (error) {
     res
       .status(500)
