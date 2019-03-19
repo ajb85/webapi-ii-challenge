@@ -65,16 +65,30 @@ router.delete("/:id", (req, res) => {
     .then(success => {
       success
         ? res.status(200).end()
-        : res
-            .status(404)
-            .json({
-              message: "The post with the specified ID does not exist."
-            });
+        : res.status(404).json({
+            message: "The post with the specified ID does not exist."
+          });
     })
     .catch(err =>
       res.status(500).json({ error: "The post could not be removed" })
     );
 });
-router.put("/:id", (req, res) => {});
+router.put("/:id", (req, res) => {
+  if (!req.body.title || !req.body.contents) {
+    res.status(400).json({
+      errorMessage: "Please provide title and contents for the post."
+    });
+  } else {
+    db.update(req.params.id, req.body).then(success => {
+      success
+        ? res.status(200).json(req.body)
+        : res
+            .status(404)
+            .json({
+              message: "The post with the specified ID does not exist."
+            });
+    });
+  }
+});
 
 module.exports = router;
